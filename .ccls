@@ -1,0 +1,3 @@
+-std=c2x -Wall -Wextra -Werror -pedantic `pkg-config --cflags gtk4`
+`pkg-config --libs gtk4`
+
