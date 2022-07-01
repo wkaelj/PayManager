@@ -1,0 +1,43 @@
+#ifndef CL_CLIENT_H
+#define CL_CLIENT_H
+
+#include <vector>
+#include <gtkmm.h>
+
+#include "server.hpp"
+
+namespace cl
+{
+
+class Client;
+
+#include "shiftlist.hpp"
+
+// manage the GUI
+// - Add a new shift
+// - retrieve shifts from server
+// - send shifts to server
+class Client : public Gtk::Window
+{
+
+    public:
+    Client(sv::Server &server);
+    ~Client();
+
+    void addShift(sv::Shift s);
+    void deleteShift(sv::Shift s);
+
+    private:
+    std::vector<sv::Shift> shifts_;
+
+    sv::Server &server_;
+    
+    cl::ShiftList *shiftList_;
+
+    // gtk components
+    Gtk::Paned internalPane_;
+};
+
+} // cl
+
+#endif // CL_CLIENT_H
