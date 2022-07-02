@@ -18,4 +18,10 @@ Server::~Server()
     // save data
 }
 
+std::vector<Shift> Server::retrieveShifts(void)
+{
+    std::vector<Shift> v(0);
+    return v;
+}
+
 }

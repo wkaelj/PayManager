@@ -53,7 +53,19 @@ Gtk::Button ShiftBox::createEditButton(ShiftBox &self)
     return editButton;
 }
 
-ShiftBox& ShiftBox::operator = (ShiftBox& other)
+ShiftBox::ShiftBox(const ShiftBox &other)
+    : Glib::ObjectBase(),
+    sigc::trackable(),Q
+    Gtk::Grid(),
+    callback_{other.callback_},
+    shift_{other.shift_},
+    deleteButton_{createDeleteButton(*this)},
+    editButton_{createEditButton(*this)}
+{
+    // epic code
+}
+
+ShiftBox& ShiftBox::operator = (const ShiftBox &other)
 {
 
     callback_ = other.callback_;
@@ -61,8 +73,13 @@ ShiftBox& ShiftBox::operator = (ShiftBox& other)
     deleteButton_ = createDeleteButton(*this);
     editButton_ = createEditButton(*this);
 
-
     return *this;
+}
+
+ShiftBox ShiftBox::create(sv::Shift s, Client &callback)
+{
+    ShiftBox b{s, callback};
+    return b;
 }
 
 ShiftBox::~ShiftBox()
@@ -113,25 +130,27 @@ void ShiftList::addShift(sv::Shift s)
         // otherwise, insert the shift if it belongs
     // otherwise insert new shift at the end of list
 
+    const ShiftBox newShift{s, callback_};
+
     // check if shift should be further ahead in list
     for (size_t i = 0; i < listBoxes_.size(); i++)
     {
         // replace
         if (listBoxes_[i].getDate() == s.date)
         {
-            listBoxes_.assign(i, {s, callback_});
+            listBoxes_.assign(i, ShiftBox::create(s, callback_));
             internalGrid_.attach(listBoxes_[i], 0, i, 1, 1);
             return;
         } else if (listBoxes_[i].getDate() < s.date) // insert behind
         {
-            listBoxes_.insert(listBoxes_.begin() + i, {s, callback_});
+            listBoxes_.insert(listBoxes_.begin() + i, ShiftBox::create(s, callback_));
             internalGrid_.insert_row(i);
             internalGrid_.attach(listBoxes_[i], 0, i, 1, 1);
             return;
         }
 
         internalGrid_.insert_row(listBoxes_.size());
-        listBoxes_.push_back({s, callback_});
+        listBoxes_.push_back(ShiftBox::create(s, callback_));
         internalGrid_.attach(listBoxes_[listBoxes_.size()], 0, listBoxes_.size(), 1, 1);
     }
 

@@ -6,15 +6,12 @@
 
 #include "server.hpp"
 
-namespace cl
-{
-    class Client;
-}
-
 #include "shiftlist.hpp"
 
 namespace cl
 {
+
+class ShiftList;
 
 // manage the GUI
 // - Add a new shift
@@ -38,7 +35,7 @@ class Client : public Gtk::Window
 
     sv::Server &server_;
     
-    cl::ShiftList *shiftList_;
+    ShiftList *shiftList_;
 
     // gtk components
     Gtk::Paned internalPane_;

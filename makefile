@@ -4,7 +4,7 @@ LFLAGS= -lstdc++ `pkg-config --libs gtkmm-3.0`
 # build folder
 BIN=bin
 
-SOURCES= $(wildcard src/*.cpp) $(wildcard src/*.hpp)
+SOURCES= $(wildcard src/*.cpp) # $(wildcard src/*.hpp)
 OBJS=$(SOURCES:.cpp=.o)
 
 # exectutable name

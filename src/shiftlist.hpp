@@ -6,6 +6,8 @@
 namespace cl
 {
 
+class Client;
+
 
 class ShiftBox : public Gtk::Grid
 {
@@ -17,7 +19,10 @@ class ShiftBox : public Gtk::Grid
     time_t getDuration(void) { return shift_.duration; }
 
     // copy operator
-    ShiftBox& operator = (ShiftBox& other);
+    ShiftBox(const ShiftBox &other);
+    ShiftBox& operator = (const ShiftBox &other);
+
+    static ShiftBox create(sv::Shift s, Client &callback);
 
     private:
     Client &callback_;
