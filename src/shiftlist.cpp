@@ -8,11 +8,13 @@ namespace cl
 
 #include <stdexcept>
 
-ShiftBox::ShiftBox(sv::Shift shift, Client &callback) :
+ShiftBox::ShiftBox(sv::Shift shift, Client &callback)
+    : Gtk::Grid(),
     callback_{callback},
-    shift_{shift}
+    shift_{shift},
+    deleteButton_{createDeleteButton(*this)},
+    editButton_{createEditButton(*this)}
 {
-
     // date label
     std::string dateString = asctime(gmtime(&shift_.date));
     Gtk::Label date{dateString};
@@ -28,6 +30,41 @@ ShiftBox::ShiftBox(sv::Shift shift, Client &callback) :
 
 }
 
+Gtk::Button ShiftBox::createDeleteButton(ShiftBox &self)
+{
+
+    Gtk::Button deleteButton{"Delete"};
+    deleteButton.set_always_show_image(true);
+    deleteButton.set_image_from_icon_name("edit-delete", Gtk::ICON_SIZE_BUTTON);
+    deleteButton.signal_clicked().connect(
+        sigc::mem_fun(self, &ShiftBox::delete_callback));
+    
+    return deleteButton;
+}
+
+Gtk::Button ShiftBox::createEditButton(ShiftBox &self)
+{
+    Gtk::Button editButton{"Edit"};
+    editButton.set_always_show_image(true);
+    editButton.set_image_from_icon_name("edit-entry", Gtk::ICON_SIZE_BUTTON);
+    editButton.signal_clicked().connect(
+        sigc::mem_fun(self, &ShiftBox::edit_callback));
+
+    return editButton;
+}
+
+ShiftBox& ShiftBox::operator = (ShiftBox& other)
+{
+
+    callback_ = other.callback_;
+    shift_ = other.shift_;
+    deleteButton_ = createDeleteButton(*this);
+    editButton_ = createEditButton(*this);
+
+
+    return *this;
+}
+
 ShiftBox::~ShiftBox()
 {
     
@@ -40,10 +77,10 @@ void ShiftBox::delete_callback()
 
 ShiftList::ShiftList(std::vector<sv::Shift> &shifts, Client &cl)
     : Gtk::ScrolledWindow{},
+    callback_{cl},
     internalViewport_{
         Gtk::ScrolledWindow::get_vadjustment(), 
-        Gtk::ScrolledWindow::get_vadjustment()},
-    callback_{cl}
+        Gtk::ScrolledWindow::get_vadjustment()}
 {
 
     internalGrid_.set_row_homogeneous(true);
@@ -70,10 +107,6 @@ void ShiftList::updateShifts(std::vector<sv::Shift> &shifts)
 
 void ShiftList::addShift(sv::Shift s)
 {
-    // create new shift box
-    ShiftBox newShift{
-        s, 
-        callback_};
     
     // iterate through list
         // if shift at date already exists, overwrite
@@ -86,19 +119,19 @@ void ShiftList::addShift(sv::Shift s)
         // replace
         if (listBoxes_[i].getDate() == s.date)
         {
-            listBoxes_.assign(i, newShift);
+            listBoxes_.assign(i, {s, callback_});
             internalGrid_.attach(listBoxes_[i], 0, i, 1, 1);
             return;
         } else if (listBoxes_[i].getDate() < s.date) // insert behind
         {
-            listBoxes_.insert(listBoxes_.begin() + i, newShift);
+            listBoxes_.insert(listBoxes_.begin() + i, {s, callback_});
             internalGrid_.insert_row(i);
             internalGrid_.attach(listBoxes_[i], 0, i, 1, 1);
             return;
         }
 
         internalGrid_.insert_row(listBoxes_.size());
-        listBoxes_.push_back(newShift);
+        listBoxes_.push_back({s, callback_});
         internalGrid_.attach(listBoxes_[listBoxes_.size()], 0, listBoxes_.size(), 1, 1);
     }
 

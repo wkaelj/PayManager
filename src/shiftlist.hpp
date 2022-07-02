@@ -16,6 +16,9 @@ class ShiftBox : public Gtk::Grid
     time_t getDate(void) { return shift_.date; }
     time_t getDuration(void) { return shift_.duration; }
 
+    // copy operator
+    ShiftBox& operator = (ShiftBox& other);
+
     private:
     Client &callback_;
 
@@ -23,11 +26,13 @@ class ShiftBox : public Gtk::Grid
 
     // gtk components
     Gtk::Button deleteButton_;
+    static Gtk::Button createDeleteButton(ShiftBox &self);
     Gtk::Button editButton_;
+    static Gtk::Button createEditButton(ShiftBox &self);
 
     // gtk callbacks
-    void delete_callback();
-    void edit_callback();
+    void delete_callback(void);
+    void edit_callback(void);
 
 };
 

@@ -8,10 +8,13 @@
 
 namespace cl
 {
-
-class Client;
+    class Client;
+}
 
 #include "shiftlist.hpp"
+
+namespace cl
+{
 
 // manage the GUI
 // - Add a new shift
@@ -26,6 +29,9 @@ class Client : public Gtk::Window
 
     void addShift(sv::Shift s);
     void deleteShift(sv::Shift s);
+
+    // assignment operator
+    Client& operator = (Client& cl);
 
     private:
     std::vector<sv::Shift> shifts_;

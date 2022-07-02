@@ -5,7 +5,8 @@
 namespace cl
 {
 
-Client::Client(sv::Server &server) :
+Client::Client(sv::Server &server)
+    : Gtk::Window(),
     server_{server},
     internalPane_{Gtk::Orientation::ORIENTATION_HORIZONTAL}
 {
@@ -16,6 +17,11 @@ Client::Client(sv::Server &server) :
     shiftList_->updateShifts(shifts_);
     internalPane_.add1(*shiftList_);
 
+}
+
+Client& Client::operator=(Client& cl)
+{
+    return cl;
 }
 
 void Client::addShift(sv::Shift s)
