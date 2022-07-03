@@ -9,12 +9,11 @@ namespace cl
 class Client;
 
 
-class ShiftBox : public Gtk::Grid
+class ShiftBox
 {
 
     public:
     ShiftBox(sv::Shift shift, Client &callback);
-    ~ShiftBox();
     time_t getDate(void) { return shift_.date; }
     time_t getDuration(void) { return shift_.duration; }
 
@@ -30,6 +29,7 @@ class ShiftBox : public Gtk::Grid
     sv::Shift shift_;
 
     // gtk components
+    Gtk::Grid internalGrid_;
     Gtk::Button deleteButton_;
     static Gtk::Button createDeleteButton(ShiftBox &self);
     Gtk::Button editButton_;
@@ -46,7 +46,6 @@ class ShiftList : public Gtk::ScrolledWindow
 
     public:
     ShiftList(std::vector<sv::Shift> &shifts, Client &callback);
-    ~ShiftList();
 
     // get the list of shifts
     std::vector<sv::Shift> &getShiftList(void);

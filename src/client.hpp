@@ -21,8 +21,7 @@ class Client : public Gtk::Window
 {
 
     public:
-    Client(sv::Server &server);
-    ~Client();
+    Client();
 
     void addShift(sv::Shift s);
     void deleteShift(sv::Shift s);
@@ -33,7 +32,7 @@ class Client : public Gtk::Window
     private:
     std::vector<sv::Shift> shifts_;
 
-    sv::Server &server_;
+    sv::Server server_;
     
     ShiftList *shiftList_;
 

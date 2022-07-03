@@ -6,17 +6,16 @@
 namespace cl
 {
 
-Client::Client(sv::Server &server)
+Client::Client()
     : Gtk::Window(),
-    server_{server},
-    internalPane_{Gtk::Orientation::ORIENTATION_HORIZONTAL}
+    server_(),
+    internalPane_{Gtk::Orientation::HORIZONTAL}
 {
-
 
     shifts_ = server_.retrieveShifts();
     shiftList_ = new ShiftList(shifts_, *this);
     shiftList_->updateShifts(shifts_);
-    internalPane_.add1(*shiftList_);
+    internalPane_.set_start_child(*shiftList_);
 
 }
 

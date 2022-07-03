@@ -1,5 +1,5 @@
-CXXFLAGS= -g -Og -std=c++17 -Wall -Wextra `pkg-config --cflags gtkmm-3.0` -I/usr/include/gtkmm-3.0
-LFLAGS= -lstdc++ `pkg-config --libs gtkmm-3.0`
+CXXFLAGS= `pkg-config --cflags gtkmm-4.0` -g -std=c++17 -Wall -Wno-reorder
+LIBS= `pkg-config --libs gtkmm-4.0`
 
 # build folder
 BIN=bin
@@ -11,18 +11,18 @@ OBJS=$(SOURCES:.cpp=.o)
 BINARY=PayManager
 
 # chosen compiler
-CXX=cc
+CXX ?= g++
 
-.PHONY: clean
+.PHONY: clean run phony all
 
 all: dirs $(BINARY)
-	rm -rf ./$(BIN)/ui
-	cp -r ./ui ./bin/ui
-
 
 # run executable
 run:
-	./$(BIN)/$(BINARY)
+	G_ENABLE_DIAGNOSTIC=1 ./$(BIN)/$(BINARY)
+
+debug: all
+	gdb ./$(BIN)/$(BINARY)
 
 # directories for compiler
 dirs:
@@ -31,7 +31,7 @@ dirs:
 # link objs into executable
 $(BINARY): $(OBJS)
 	$(info OBJS is $(OBJS))
-	$(CC) -o $(BIN)/$(BINARY) $^ $(LFLAGS)
+	$(CC) $(CXXFLAGS) -o $(BIN)/$(BINARY) $^ $(LIBS)
 
 # compile src to objs
 %.o: %.c

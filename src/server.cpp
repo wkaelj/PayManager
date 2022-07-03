@@ -10,18 +10,23 @@ bool Shift::compare(Shift a, Shift b)
 
 Server::Server()
 {
-    // idk what to do yet
+    // connect to server
 }
 
 Server::~Server()
 {
-    // save data
+    // disconnect from server
+}
+
+void Server::saveShifts(std::vector<Shift> shifts)
+{
+    // write shifts to server
 }
 
 std::vector<Shift> Server::retrieveShifts(void)
 {
     std::vector<Shift> v(0);
-    return v;
+    return v;   
 }
 
 }

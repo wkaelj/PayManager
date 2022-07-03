@@ -8,8 +8,8 @@ namespace cl
 
 #include <stdexcept>
 
-ShiftBox::ShiftBox(sv::Shift shift, Client &callback)
-    : Gtk::Grid(),
+ShiftBox::ShiftBox(sv::Shift shift, Client &callback) :
+    internalGrid_{}
     callback_{callback},
     shift_{shift},
     deleteButton_{createDeleteButton(*this)},
@@ -18,7 +18,7 @@ ShiftBox::ShiftBox(sv::Shift shift, Client &callback)
     // date label
     std::string dateString = asctime(gmtime(&shift_.date));
     Gtk::Label date{dateString};
-    add(date);
+    internalGrid_.attach(date, 0, 0, 1, 1);
 
     // duration label
     std::string durationString;
@@ -26,7 +26,7 @@ ShiftBox::ShiftBox(sv::Shift shift, Client &callback)
     durationString.append(std::to_string(shift_.duration % 60)).append("m"); // minutes
 
     Gtk::Label duration{durationString};
-    add(duration);
+    internalGrid_.attach(duration, 1, 0, 1, 1);
 
 }
 
@@ -34,8 +34,7 @@ Gtk::Button ShiftBox::createDeleteButton(ShiftBox &self)
 {
 
     Gtk::Button deleteButton{"Delete"};
-    deleteButton.set_always_show_image(true);
-    deleteButton.set_image_from_icon_name("edit-delete", Gtk::ICON_SIZE_BUTTON);
+    deleteButton.set_icon_name("edit-delete");
     deleteButton.signal_clicked().connect(
         sigc::mem_fun(self, &ShiftBox::delete_callback));
     
@@ -45,18 +44,15 @@ Gtk::Button ShiftBox::createDeleteButton(ShiftBox &self)
 Gtk::Button ShiftBox::createEditButton(ShiftBox &self)
 {
     Gtk::Button editButton{"Edit"};
-    editButton.set_always_show_image(true);
-    editButton.set_image_from_icon_name("edit-entry", Gtk::ICON_SIZE_BUTTON);
+    editButton.set_icon_name("edit-entry");
     editButton.signal_clicked().connect(
         sigc::mem_fun(self, &ShiftBox::edit_callback));
 
     return editButton;
 }
 
-ShiftBox::ShiftBox(const ShiftBox &other)
-    : Glib::ObjectBase(),
-    sigc::trackable(),Q
-    Gtk::Grid(),
+ShiftBox::ShiftBox(const ShiftBox &other) :
+    internalGrid_{other.internalGrid_},
     callback_{other.callback_},
     shift_{other.shift_},
     deleteButton_{createDeleteButton(*this)},
@@ -82,14 +78,15 @@ ShiftBox ShiftBox::create(sv::Shift s, Client &callback)
     return b;
 }
 
-ShiftBox::~ShiftBox()
-{
-    
-}
 
 void ShiftBox::delete_callback()
 {
     callback_.deleteShift(shift_);
+}
+
+void ShiftBox::edit_callback()
+{
+    throw std::runtime_error("Cannot edit shift");
 }
 
 ShiftList::ShiftList(std::vector<sv::Shift> &shifts, Client &cl)
@@ -102,7 +99,7 @@ ShiftList::ShiftList(std::vector<sv::Shift> &shifts, Client &cl)
 
     internalGrid_.set_row_homogeneous(true);
 
-    internalViewport_.add(internalGrid_);
+    internalViewport_.set_child(internalGrid_);
     updateShifts(shifts);
 }
 
